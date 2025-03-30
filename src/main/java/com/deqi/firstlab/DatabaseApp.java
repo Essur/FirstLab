@@ -18,7 +18,6 @@ public class DatabaseApp extends JFrame {
     private final JTextField queryField;
     private final JTable resultTable;
     private final JLabel timeLabel;
-    private Connection connection = null;
 
     public DatabaseApp() {
         setTitle("Database Query Executor");
@@ -31,7 +30,7 @@ public class DatabaseApp extends JFrame {
         topPanel.setLayout(new FlowLayout());
 
         // Connection type dropdown
-        connectionTypeCombo = new JComboBox<>(new String[]{"JDBC", "ODBC"});
+        connectionTypeCombo = new JComboBox<>(new String[]{"JDBC", "DBCP2"});
         topPanel.add(new JLabel("Connection Type:"));
         topPanel.add(connectionTypeCombo);
 
@@ -73,7 +72,7 @@ public class DatabaseApp extends JFrame {
         long executionTime = 0;
 
         try {
-            connection = DatabaseConnectionFactory.getConnection(connectionType);
+            Connection connection = DatabaseConnectionFactory.getConnection(connectionType);
             ResultSet resultSet = QueryExecutor.executeQuery(connection, query);
             executionTime = displayResultsInTable(resultSet);
         } catch (SQLException e) {
