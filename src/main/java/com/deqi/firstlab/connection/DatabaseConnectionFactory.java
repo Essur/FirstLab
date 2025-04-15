@@ -1,38 +1,29 @@
 package com.deqi.firstlab.connection;
 
-import org.apache.commons.dbcp2.BasicDataSource;
-
 import java.sql.*;
 
 public class DatabaseConnectionFactory {
-    public static Connection getConnection(String connectionType) throws SQLException {
-        if ("JDBC".equals(connectionType)) {
-            return new JDBCConnection().createConnection();
-        } else if ("DBCP2".equals(connectionType)) {
-            return new DataSourceConnection().createConnection();
+    public static Connection getConnection(String dbType) throws SQLException {
+        if ("PostgreSQL".equalsIgnoreCase(dbType)) {
+            return getPostgresConnection();
+        } else if ("MySQL".equalsIgnoreCase(dbType)) {
+            return getMySQLConnection();
         } else {
-            throw new IllegalArgumentException("Invalid connection type: " + connectionType);
+            throw new IllegalArgumentException("Unsupported DB type: " + dbType);
         }
     }
 
-    private static class JDBCConnection {
-        public Connection createConnection() throws SQLException {
-            String dbURL = "jdbc:postgresql://localhost/myapp_db";
-            String user = "postgres";
-            String password = "12345password";
-            return DriverManager.getConnection(dbURL, user, password);
-        }
+    private static Connection getPostgresConnection() throws SQLException {
+        String url = "jdbc:postgresql://localhost:5433/myapp_db?currentSchema=my_schema";
+        String user = "postgres";
+        String password = "12345password";
+        return DriverManager.getConnection(url, user, password);
     }
 
-    private static class DataSourceConnection {
-        public Connection createConnection() throws SQLException {
-            BasicDataSource dataSource = new BasicDataSource();
-            dataSource.setDriverClassName("org.postgresql.Driver");
-            dataSource.setUrl("jdbc:postgresql://localhost/myapp_db");
-            dataSource.setUsername("postgres");
-            dataSource.setPassword("12345password");
-            dataSource.setMaxTotal(10);
-            return dataSource.getConnection();
-        }
+    private static Connection getMySQLConnection() throws SQLException {
+        String url = "jdbc:mysql://localhost:3306/myapp_db";
+        String user = "root";
+        String password = "12345password";
+        return DriverManager.getConnection(url, user, password);
     }
 }
