@@ -3,6 +3,7 @@ package com.deqi.firstlab;
 import com.deqi.firstlab.connection.DatabaseConnectionFactory;
 import com.deqi.firstlab.gui.DistributedTransactionDialog;
 import com.deqi.firstlab.service.QueryExecutor;
+import com.deqi.firstlab.util.TableParser;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -74,21 +75,7 @@ public class DatabaseApp extends JFrame {
 
 
     private void displayResultsInTable(ResultSet resultSet) throws SQLException {
-        ResultSetMetaData metaData = resultSet.getMetaData();
-        int columnCount = metaData.getColumnCount();
-        String[] columnNames = new String[columnCount];
-        for (int i = 1; i <= columnCount; i++) {
-            columnNames[i - 1] = metaData.getColumnName(i);
-        }
-        DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
-        while (resultSet.next()) {
-            Object[] row = new Object[columnCount];
-            for (int i = 1; i <= columnCount; i++) {
-                row[i - 1] = resultSet.getObject(i);
-            }
-            tableModel.addRow(row);
-        }
-        resultTable.setModel(tableModel);
+        resultTable.setModel(TableParser.getMetaData(resultSet));
     }
 
     private void showErrorDialog(String message) {
